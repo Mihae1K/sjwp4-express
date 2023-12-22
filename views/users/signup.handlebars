@@ -77,6 +77,19 @@
                 </div>
             </div>
             {{/if}}
+
+            {{#if result.database_error}}
+            <div class="mt-4">
+                <div class="card w-96 bg-error text-black">
+                    <div class="card-body">
+                        <h2 class="card-title">Greška!</h2>
+                        <p>
+                            Dogodila se greška prilikom spremanja podataka. Kontaktirajte administratora!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {{/if}}
         </div>
     </div>
 </div>
