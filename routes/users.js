@@ -5,6 +5,12 @@ const { db } = require("../services/db.js");
 const { getUserJwt } = require("../services/auth.js");
 const bcrypt = require("bcrypt");
 
+// GET /users/signout
+router.get("/signout", function (req, res, next) {
+  res.clearCookie(process.env.AUTH_COOKIE_MAIN);
+  res.redirect("/");
+});
+
 // GET /users/signin
 router.get("/signin", function (req, res, next) {
   res.render("users/signin", { result: { display_form: true } });
@@ -33,14 +39,14 @@ router.post("/signin", function (req, res, next) {
 
   if (dbResult) {
     const passwordHash = dbResult.password;
-    const compareResult = bcrypt.compareSync(password, passwordHash)
+    const compareResult = bcrypt.compareSync(password, passwordHash);
 
     if (!compareResult) {
       res.render("users/signin", { result: { invalid_credentials: true } });
     }
 
     const token = getUserJwt(dbResult.id, dbResult.email, dbResult.name, dbResult.role);
-    res.cookie("auth", token);
+    res.cookie(process.env.AUTH_COOKIE_MAIN, token);
 
     res.render("users/signin", { result: { success: true } });
   } else {
@@ -48,7 +54,7 @@ router.post("/signin", function (req, res, next) {
   }
 });
 
-// SCHEMA signup
+// SCHEMA signin
 const schema_signup = Joi.object({
   name: Joi.string().min(3).max(50).required(),
   email: Joi.string().email().max(50).required(),
@@ -66,23 +72,25 @@ router.post("/signup", function (req, res, next) {
   // do validation
   const result = schema_signup.validate(req.body);
   if (result.error) {
-    console.log("ERROR", result.error);
-
     res.render("users/signup", { result: { validation_error: true, display_form: true } });
     return;
   }
 
-  const hash = bcrypt.hashSync(req.body.password, 10)
+  const stmt1 = db.prepare("SELECT * FROM users WHERE email = ?;");
+  const selectResult = stmt1.get(req.body.email);
+  if (selectResult) {
+    res.render("users/signup", { result: { email_in_use: true, display_form: true } });
+    return
+  }
 
-  const stmt = db.prepare("INSERT INTO users (email, password, name, signed_at, role) VALUES (?, ?, ?, ?, ?);");
-  const insertResult = stmt.run(req.body.email, hash, req.body.name, Date.now(), "user");
-
-  console.log("RES", insertResult);
+  const passwordHash = bcrypt.hashSync(req.body.password, 10);
+  const stmt2 = db.prepare("INSERT INTO users (email, password, name, signed_at, role) VALUES (?, ?, ?, ?, ?);");
+  const insertResult = stmt2.run(req.body.email, passwordHash, req.body.name, Date.now(), "user");
 
   if (insertResult.changes && insertResult.changes === 1) {
-    res.render("users/signup", { result: {success: true} });
+    res.render("users/signup", { result: { success: true } });
   } else {
-    res.render("users/signup", { result: {database_error: true} });
+    res.render("users/signup", { result: { database_error: true } });
   }
 });
 

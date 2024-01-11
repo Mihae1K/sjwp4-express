@@ -1,4 +1,4 @@
-const JWT_SECRET_KEY = process.env.JWT_SECRET;
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 const jwt = require("jsonwebtoken");
 
@@ -21,22 +21,32 @@ function getUserJwt(id, email, name, role, expDays = 7) {
 }
 
 // MIDDLEWARE FOR AUTH COOKIE CHECK
-function checkAuthCookie(req, res, next) {
-    const token = req.cookies["auth"];
+function authRequired(req, res, next) {
+    
+    if (!req.user) {
+        throw new Error("Potrebna je prijava u sustav.");
+    }
+    next();
+}
 
-    let result;
+function parseAuthCookie(req, res, next) {
+    const token = req.cookies[process.env.AUTH_COOKIE_MAIN];
+
+    let result = null;
     try {
         result = jwt.verify(token, JWT_SECRET_KEY);
-        console.log("TOKEN CHECK", result);
     } catch (error) {
         next();
+        return;
     }
 
     req.user = result;
+    res.locals.user = result;
     next();
 }
 
 module.exports = {
     getUserJwt,
-    checkAuthCookie
+    authRequired,
+    parseAuthCookie
 };
