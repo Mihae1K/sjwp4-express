@@ -2,11 +2,16 @@ const express = require("express");
 const router = express.Router();
 const Joi = require("joi");
 const { db } = require("../services/db.js");
-const { getUserJwt } = require("../services/auth.js");
+const { getUserJwt, authRequired} = require("../services/auth.js");
 const bcrypt = require("bcrypt");
 
+// GET /users/data
+router.get("/data", authRequired, function (req, res, next) {
+  res.render("users/data");
+});
+
 // GET /users/signout
-router.get("/signout", function (req, res, next) {
+router.get("/signout", authRequired, function (req, res, next) {
   res.clearCookie(process.env.AUTH_COOKIE_MAIN);
   res.redirect("/");
 });
