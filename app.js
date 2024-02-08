@@ -16,7 +16,7 @@ const app = express();
 
 // VIEW ENGINE SETUP
 app.engine('handlebars', engine({
-  partialsDir: path.join(__dirname, "/views/partials")
+  partialsDir: path.join(__dirname, '/views/partials')
 }));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'handlebars');
