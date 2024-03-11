@@ -18,6 +18,7 @@
             </thead>
             <!-- body -->
             <tbody>
+
                 {{#each result.items}}
                 <tr>
                     <th>{{this.id}}</th>
@@ -27,7 +28,7 @@
                             {{this.description}}
                         </div>
                     </td>
-                    <td x-data="">
+                    <td x-data="{}">
                         <span x-text="new Date('{{this.apply_till}}').toLocaleString()"></span>
                     </td>
                     <td>{{this.author}}</td>

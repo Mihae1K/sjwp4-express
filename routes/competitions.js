@@ -15,7 +15,7 @@ router.get("/", authRequired, function (req, res, next) {
 
     const result = stmt.all();
 
-    res.render("competitions/index", { result: {items: result} });
+    res.render("competitions/index", { result: { items: result } });
 });
 
 // SCHEMA id
@@ -25,16 +25,17 @@ const schema_id = Joi.object({
 
 // GET /competitions/delete/:id
 router.get("/delete/:id", adminRequired, function (req, res, next) {
+    // do validation
     const result = schema_id.validate(req.params);
     if (result.error) {
         throw new Error("Neispravan poziv");
     }
 
-    const stmt = db.prepare("DELETE FROM competitions WHERE id = ?;")
+    const stmt = db.prepare("DELETE FROM competitions WHERE id = ?;");
     const deleteResult = stmt.run(req.params.id);
 
-    if (!deleteResult.changes || deleteResult.changes != 1) {
-        throw new Error("Operacija nije uspijela");
+    if (!deleteResult.changes || deleteResult.changes !== 1) {
+        throw new Error("Operacija nije uspjela");
     }
 
     res.redirect("/competitions");
@@ -42,6 +43,7 @@ router.get("/delete/:id", adminRequired, function (req, res, next) {
 
 // GET /competitions/edit/:id
 router.get("/edit/:id", adminRequired, function (req, res, next) {
+    // do validation
     const result = schema_id.validate(req.params);
     if (result.error) {
         throw new Error("Neispravan poziv");
@@ -54,7 +56,34 @@ router.get("/edit/:id", adminRequired, function (req, res, next) {
         throw new Error("Neispravan poziv");
     }
 
-    res.render("competitions/form", { result: {display_form: true, edit: selectResult} })
+    res.render("competitions/form", { result: { display_form: true, edit: selectResult } });
+});
+
+// SCHEMA edit
+const schema_edit = Joi.object({
+    id: Joi.number().integer().positive().required(),
+    name: Joi.string().min(3).max(50).required(),
+    description: Joi.string().min(3).max(1000).required(),
+    apply_till: Joi.date().iso().required()
+});
+
+// POST /competitions/edit
+router.post("/edit", adminRequired, function (req, res, next) {
+    // do validation
+    const result = schema_edit.validate(req.body);
+    if (result.error) {
+        res.render("competitions/form", { result: { validation_error: true, display_form: true } });
+        return;
+    }
+
+    const stmt = db.prepare("UPDATE competitions SET name = ?, description = ?, apply_till = ? WHERE id = ?;");
+    const updateResult = stmt.run(req.body.name, req.body.description, req.body.apply_till, req.body.id);
+
+    if (updateResult.changes && updateResult.changes === 1) {
+        res.redirect("/competitions");
+    } else {
+        res.render("competitions/form", { result: { database_error: true } });
+    }
 });
 
 // GET /competitions/add
