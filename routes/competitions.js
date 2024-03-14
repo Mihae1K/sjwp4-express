@@ -117,4 +117,16 @@ router.post("/add", adminRequired, function (req, res, next) {
     }
 });
 
+//GET /competitions/signup
+router.get("/signup/:id", authRequired, function (req, res, next) {
+    const stmt = db.prepare("INSERT INTO signups (user_id, competition_id) VALUES (?, ?);");
+    const insertResult = stmt.run(req.user.sub, req.params.id);
+
+    if (insertResult.changes && insertResult.changes === 1) {
+        res.render("competitions/signup", { result: { success: true } });
+    } else {
+        res.render("competitions/signup", { result: { database_error: true } });
+    }
+});
+
 module.exports = router;
