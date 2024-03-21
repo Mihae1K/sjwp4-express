@@ -1,0 +1,41 @@
+{{#if result.success}}
+    <div class="overflow-x-auto p-2">
+        <table class="table">
+            <!-- head -->
+            <thead>
+                <tr>
+                    <th>Ime</th>
+                    <th>Bodovi</th>
+                </tr>
+            </thead>
+            <!-- body -->
+            <tbody>
+
+                {{#each result.users}}
+                <tr>
+                    <td>{{this.name}}</td>
+
+                    <td class="flex flex-wrap gap-2">
+                        {{#unless ../user.is_admin}}{{this.Points}}{{/unless}}
+                        {{#if ../user.is_admin}}
+                            <form class="flex flex-row">
+                                <div class="pb-2 flex flex-row">
+                                    <input type="number" name="bodovi" class="bg-neutral" required="" 
+                                    value="{{this.Points}}" />
+                                </div>
+                                <div>
+                                    <input type="submit" value="Potvrdi" class="flex-1 btn btn-primary" />
+                                </div>
+                            </form>
+                        {{/if}}
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>    
+        </table>
+    </div>
+{{/if}}
+
+{{#if result.no_applications}}
+<div>no applications yet</div>
+{{/if}}

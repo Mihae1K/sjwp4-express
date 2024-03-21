@@ -129,4 +129,23 @@ router.get("/apply/:id", authRequired, function (req, res, next) {
     }
 });
 
+//GET /competitions/view
+router.get("/view/:id", authRequired, function (req, res, next) {
+    const stmt = db.prepare(`
+        SELECT u.name, a.points
+        FROM applications a
+        INNER JOIN users u ON u.id = a.user_id
+        WHERE a.competition_id = ?
+    `);
+
+    const users = stmt.all(req.params.id);
+    console.log(users.length);
+
+    if (users.length>0) {
+        res.render("competitions/view", { result: { users: users, success: true } });
+    } else {
+        res.render("competitions/view", { result: { no_applications: true } });
+    }
+});
+
 module.exports = router;
