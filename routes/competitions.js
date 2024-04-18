@@ -132,7 +132,7 @@ router.get("/apply/:id", authRequired, function (req, res, next) {
 //GET /competitions/view
 router.get("/view/:id", authRequired, function (req, res, next) {
     const stmt = db.prepare(`
-        SELECT u.name, a.points
+        SELECT u.name, a.points, a.id, a.competition_id
         FROM applications a
         INNER JOIN users u ON u.id = a.user_id
         WHERE a.competition_id = ?
@@ -146,6 +146,20 @@ router.get("/view/:id", authRequired, function (req, res, next) {
     } else {
         res.render("competitions/view", { result: { no_applications: true } });
     }
+});
+
+//POST /competitions/view
+router.post("/view/:id/update/:appID", authRequired, function (req, res, next) {
+    console.log(req.params)
+    const competitionId = req.params.id;
+    const appID = req.params.appID;
+    const newPoints = req.body.bodovi;
+    console.log("update ran")
+
+    const stmt = db.prepare("UPDATE applications SET Points = ? WHERE competition_id = ? AND id = ?;");
+    const appUpdateResult = stmt.run(newPoints, competitionId, appID);
+
+    res.redirect("/competitions/view/"+competitionId);
 });
 
 module.exports = router;
