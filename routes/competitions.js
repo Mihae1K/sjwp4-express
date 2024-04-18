@@ -31,10 +31,12 @@ router.get("/delete/:id", adminRequired, function (req, res, next) {
         throw new Error("Neispravan poziv");
     }
 
-    const stmt = db.prepare("DELETE FROM competitions WHERE id = ?;");
-    const deleteResult = stmt.run(req.params.id);
+    const stmt1 = db.prepare("DELETE FROM competitions WHERE id = ?;");
+    const stmt2 = db.prepare("DELETE FROM applications WHERE competition_id = ?");
+    const deleteResult1 = stmt1.run(req.params.id);
+    const deleteResult2 = stmt2.run(req.params.id);
 
-    if (!deleteResult.changes || deleteResult.changes !== 1) {
+    if (!deleteResult1.changes || deleteResult1.changes !== 1) {
         throw new Error("Operacija nije uspjela");
     }
 
@@ -160,6 +162,32 @@ router.post("/view/:id/update/:appID", authRequired, function (req, res, next) {
     const appUpdateResult = stmt.run(newPoints, competitionId, appID);
 
     res.redirect("/competitions/view/"+competitionId);
+});
+
+//GET /competitions/print
+router.get("/print/:id", authRequired, function (req, res, next) {
+    const stmt = db.prepare(`
+        SELECT u.name, a.points, a.id, a.competition_id
+        FROM applications a
+        INNER JOIN users u ON u.id = a.user_id
+        WHERE a.competition_id = ?
+    `);
+
+    const stmt2 = db.prepare(`
+        SELECT c.name, c.apply_till
+        FROM competitions c
+        WHERE c.id = ?
+    `)
+
+    const users = stmt.all(req.params.id);
+    const competition = stmt2.all(req.params.id)
+    console.log(users.length);
+
+    if (users.length>0) {
+        res.render("competitions/print", { result: { users: users, competition: competition, success: true } });
+    } else {
+        res.render("competitions/print", { result: { no_applications: true } });
+    }
 });
 
 module.exports = router;

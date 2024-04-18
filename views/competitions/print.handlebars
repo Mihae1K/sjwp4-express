@@ -1,0 +1,31 @@
+<div class="overflow-x-auto p-2 px-96">
+    <div class="a px-96">
+        {{#each result.competition}}
+        <h1>{{this.name}}</h1>
+        <h1 x-data="{}">
+            <span x-text="new Date('{{this.apply_till}}').toLocaleString()"></span></h1>
+        {{/each}}
+    </div>
+
+    <table class="table">
+        <!-- head -->
+        <thead>
+            <tr>
+                <th>Ime</th>
+                <th>Bodovi</th>
+            </tr>
+        </thead>
+        <!-- body -->
+        <tbody>
+            {{#each result.users}}
+            <tr>
+                <td>{{this.name}}</td>
+
+                <td class="flex flex-wrap gap-2">
+                    {{this.Points}}
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>

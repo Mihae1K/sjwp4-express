@@ -1970,6 +1970,26 @@ html {
   padding-bottom: 1.5rem;
 }
 
+.px-10 {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+}
+
+.px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+.px-96 {
+  padding-left: 24rem;
+  padding-right: 24rem;
+}
+
+.px-14 {
+  padding-left: 3.5rem;
+  padding-right: 3.5rem;
+}
+
 .pb-2 {
   padding-bottom: 0.5rem;
 }
