@@ -1,0 +1,37 @@
+<div class="p-2">
+    {{#if result.display_form}}
+    <form action="/forum/add-comment/{{result.id}}" method="post"
+        class="flex flex-col gap-2">
+        <div class="pb-2 flex flex-col" x-data="{}">
+            <label>Tekst</label>
+            <textarea name="text" class="bg-neutral" rows="3" required="" minlength="3"></textarea>
+        </div>
+
+        {{> form_buttons }}
+    </form>
+    {{/if}}
+
+    {{#if result.validation_error}}
+    {{> validation_error }}
+    {{/if}}
+
+    {{#if result.database_error}}
+    {{> database_error }}
+    {{/if}}
+
+    {{#if result.success}}
+    <div class="mt-4">
+        <div class="card w-96 bg-primary text-primary-content">
+            <div class="card-body">
+                <h2 class="card-title">Uspjeh!</h2>
+                <p>
+                    Uspješno ste dodali komentar!
+                </p>
+                <div class="card-actions justify-end">
+                    <a class="btn" href="/forum/view/{{result.id}}">Nastavi na pregled objave</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/if}}
+</div>

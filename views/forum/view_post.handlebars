@@ -1,0 +1,22 @@
+<div class="p-2">
+    <div class="post rounded-md p-2 bg-indigo-900 bg-transparent flex-col flex">
+        <h1 class="post-title text-3xl">{{result.post.title}}</h1>
+        <span class="post-author text-sm">by {{result.post.author}}</span>
+        <span class="post-author text-sm text-gray-500  ">at {{result.post.date}}</span>
+        <p class="post-text text-lg bg-indigo-950 p-2 mt-2 rounded-md">{{result.post.text}}</p>
+    </div>
+
+    <div class="comments p-3">
+        <a href="/forum/add-comment/{{result.post.id}}" class="btn btn-primary mb-3">Dodaj komentar</a>
+
+        {{#each result.comments}}
+        <div class="comment rounded-md p-2 bg-indigo-900 bg-transparent flex-col flex mb-2">
+            <span class="post-author text-sm">Comment by {{this.author}}</span>
+            <span class="post-author text-sm text-gray-500  ">at {{this.date}}</span>
+            <p class="post-text text-lg bg-indigo-950 p-2 mt-2 rounded-md">{{this.text}}</p>
+        </div>
+        {{/each}}
+    </div>
+
+
+</div>

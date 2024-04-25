@@ -1,0 +1,39 @@
+<div class="p-2">
+    <a href="/forum/add" class="btn btn-primary">Nova objava</a>
+
+    <div class="overflow-x-auto">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Naslov</th>
+                    <th>Datum objave</th>
+                    <th>Autor</th>
+                    <th>Mogućnosti</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {{#each result.items}}
+                <tr>
+                    <th>{{this.id}}</th>
+                    <td>{{this.title}}</td>
+                    <td x-data="{}">
+                        <span x-text="new Date('{{this.date}}').toLocaleString()"></span>
+                    </td>
+                    <td>{{this.author}}</td>
+
+                    <td class="flex flex-wrap gap-2">
+                        <a href="/forum/view/{{this.id}}" class="btn bg-blue-800 btn-xs">Prikaz</a>
+                        {{#if ../user.is_admin}}
+                        <a href="/forum/edit/{{this.id}}" class="btn btn-accent btn-xs">Uredi</a>
+                        <a href="/forum/delete/{{this.id}}" class="btn btn-error btn-xs">Briši</a>
+                        {{/if}}
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>    
+        </table>
+    </div>
+</div>
+
